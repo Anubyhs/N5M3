@@ -1,0 +1,2 @@
+user: loja
+senha: loja
