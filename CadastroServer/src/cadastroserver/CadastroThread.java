@@ -4,7 +4,7 @@
  */
 package cadastroserver;
 
-
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -32,39 +32,67 @@ public class CadastroThread extends Thread {
 
     @Override
     public void run() {
-        try {
-            ObjectInputStream in = new ObjectInputStream(s1.getInputStream());
-            ObjectOutputStream out = new ObjectOutputStream(s1.getOutputStream());
+        try (ObjectInputStream in = new ObjectInputStream(s1.getInputStream());
+             ObjectOutputStream out = new ObjectOutputStream(s1.getOutputStream())) {
 
             String login = (String) in.readObject();
             String senha = (String) in.readObject();
 
-            Usuario usuario = ctrlUsuario.findUsuario(login, senha);
-            if (usuario == null) {
+            List<Usuario> usuarios = ctrlUsuario.findUsuario(login, senha);
+            Usuario usuario = null; // Inicializa usuario
+
+            if (usuarios.isEmpty()) {
                 System.out.println("Usuário inválido");
+                out.writeObject("ERRO: Usuário inválido"); // Envia erro ao cliente
                 s1.close();
                 return;
+            } else {
+                // Se houver múltiplos usuários, você pode implementar uma lógica para escolher um.
+                // Por enquanto, pegamos o primeiro da lista.
+                usuario = usuarios.get(0);
+                System.out.println("Usuário conectado com sucesso para: " + usuario.getLogin());
+                out.writeObject("OK: Usuário conectado"); // Envia confirmação ao cliente
             }
 
             // Obter a data e hora atuais
             LocalDateTime now = LocalDateTime.now();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+            System.out.println("Conexão estabelecida em: " + now.format(formatter));
 
-            // Exibir a mensagem de sucesso com a data e hora
-            System.out.println("Usuário conectado com sucesso : " + now.format(formatter));
+            boolean conectado = true;
+            while (conectado) {
+                try {
+                    String comando = (String) in.readObject();
 
-            while (true) {
-                String comando = (String) in.readObject();
-
-                if (comando.equals("L")) {
-                    List<Produto> produtos = ctrlProduto.findProdutoEntities();
-                    out.writeObject(produtos);
-                } else {
-                    System.out.println("Comando inválido");
+                    if (comando.equalsIgnoreCase("L")) {
+                        List<Produto> produtos = ctrlProduto.findProdutoEntities();
+                        out.writeObject(produtos);
+                    } else if (comando.equalsIgnoreCase("SAIR")) {
+                        conectado = false;
+                        out.writeObject("OK: Desconectado");
+                    } else {
+                        System.out.println("Comando inválido recebido: " + comando);
+                        out.writeObject("ERRO: Comando inválido");
+                    }
+                } catch (EOFException e) {
+                    System.out.println("Conexão encerrada pelo cliente.");
+                    conectado = false;
+                } catch (IOException | ClassNotFoundException e) {
+                    e.printStackTrace();
+                    conectado = false;
                 }
             }
         } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace(); // Para ajudar na depuração, imprimir o stack trace em caso de exceção
+            e.printStackTrace();
+        } finally {
+            try {
+                if (!s1.isClosed()) {
+                    s1.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
+        System.out.println("Thread do cliente finalizada.");
     }
 }

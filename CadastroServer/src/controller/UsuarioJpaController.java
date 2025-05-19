@@ -197,20 +197,15 @@ public class UsuarioJpaController implements Serializable {
         }
     }
 
-    public Usuario findUsuario(String login, String senha) {
+    public List<Usuario> findUsuario(String login, String senha) {
         EntityManager em = getEntityManager();
         try {
             Query query = em.createQuery("SELECT u FROM Usuario u WHERE u.login = :login AND u.senha = :senha");
             query.setParameter("login", login);
             query.setParameter("senha", senha);
-            List<Usuario> results = query.getResultList();
-            if (results.isEmpty()) {
-                return null;
-            } else {
-                return results.get(0); // Retorna o primeiro usuário encontrado
-            }
+            return query.getResultList(); // Retorna a lista de usuários
         } catch (NoResultException e) {
-            return null;
+            return new ArrayList<>(); // Retorna uma lista vazia se nenhum usuário for encontrado
         } finally {
             em.close();
         }

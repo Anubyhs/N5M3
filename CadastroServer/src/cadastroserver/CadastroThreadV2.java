@@ -4,20 +4,16 @@ import controller.MovimentoJpaController;
 import controller.PessoaJpaController;
 import controller.ProdutoJpaController;
 import controller.UsuarioJpaController;
-import controller.exceptions.NonexistentEntityException;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import model.Movimento;
 import model.Pessoa;
 import model.Produto;
 import model.Usuario;
-
 
 public class CadastroThreadV2 extends Thread {
 
@@ -37,44 +33,30 @@ public class CadastroThreadV2 extends Thread {
 
     @Override
     public void run() {
-        try (ObjectInputStream in = new ObjectInputStream(s1.getInputStream()); ObjectOutputStream out = new ObjectOutputStream(s1.getOutputStream())) {
+        try (ObjectInputStream in = new ObjectInputStream(s1.getInputStream());
+             ObjectOutputStream out = new ObjectOutputStream(s1.getOutputStream())) {
 
-            // Lê o login e senha do usuário
             String login = (String) in.readObject();
             String senha = (String) in.readObject();
 
-            Usuario usuario = ctrlUsuario.findUsuario(login, senha);
-            if (usuario == null) {
-                System.out.println("Usuário inválido");
+            List<Usuario> usuarios = ctrlUsuario.findUsuario(login, senha);
+            if (usuarios.isEmpty()) {
+                System.out.println("Usuario invalido");
                 s1.close();
                 return;
             }
-
-            System.out.println("Usuário válido");
+            // Se houver múltiplos usuários com o mesmo login/senha, você precisará
+            // implementar uma lógica para determinar qual usuário prosseguir.
+            // Por exemplo, você pode pegar o primeiro da lista:
+            Usuario usuario = usuarios.get(0);
+            System.out.println("Usuario valido");
 
             boolean isRunning = true;
             while (isRunning) {
                 try {
-                    // Verifica se o cliente fechou a conexão
-                    if (s1.isClosed() || in.available() == -1) {
-                        System.out.println("Conexão fechada pelo cliente.");
-                        isRunning = false;
-                        break;
-                    }
-
-                    // Ler o comando do cliente e verificar o tipo
-                    Object comandoObj = in.readObject();
-
-                    if (!(comandoObj instanceof String)) {
-                        System.out.println("Tipo de comando inesperado: " + comandoObj.getClass().getName());
-                        continue;
-                    }
-
-                    String comando = ((String) comandoObj).toUpperCase();  // Converte o comando para maiúsculas
-
+                    String comando = ((String) in.readObject()).toUpperCase();
                     switch (comando) {
                         case "E": {
-                            // Entrada de produtos
                             int idPessoa = (int) in.readObject();
                             int idProduto = (int) in.readObject();
                             int quantidade = (int) in.readObject();
@@ -82,6 +64,11 @@ public class CadastroThreadV2 extends Thread {
 
                             Pessoa pessoa = ctrlPessoa.findPessoa(idPessoa);
                             Produto produto = ctrlProduto.findProduto(idProduto);
+
+                            if (produto == null) {
+                                out.writeObject("Produto Inexistente");
+                                break;
+                            }
 
                             produto.setQuantidade(produto.getQuantidade() + quantidade);
                             ctrlProduto.edit(produto);
@@ -98,7 +85,6 @@ public class CadastroThreadV2 extends Thread {
                         }
 
                         case "S": {
-                            // Saída de produtos
                             int idPessoa = (int) in.readObject();
                             int idProduto = (int) in.readObject();
                             int quantidade = (int) in.readObject();
@@ -106,6 +92,16 @@ public class CadastroThreadV2 extends Thread {
 
                             Pessoa pessoa = ctrlPessoa.findPessoa(idPessoa);
                             Produto produto = ctrlProduto.findProduto(idProduto);
+
+                            if (produto == null) {
+                                out.writeObject("Produto Inexistente");
+                                break;
+                            }
+
+                            if (produto.getQuantidade() < quantidade) {
+                                out.writeObject("Quantidade insuficiente em estoque!");
+                                break;
+                            }
 
                             produto.setQuantidade(produto.getQuantidade() - quantidade);
                             ctrlProduto.edit(produto);
@@ -122,27 +118,36 @@ public class CadastroThreadV2 extends Thread {
                         }
 
                         case "L": {
-                            // Listar produtos
                             List<Produto> produtos = ctrlProduto.findProdutoEntities();
                             out.writeObject(produtos);
                             break;
                         }
 
+                        case "X": {
+                            isRunning = false;
+                            break;
+                        }
+
                         default:
-                            System.out.println("Comando inválido: " + comando);
+                            System.out.println("Comando invalido: " + comando);
                             break;
                     }
                 } catch (EOFException eof) {
-                    System.out.println("Conexão encerrada pelo cliente.");
+                    System.out.println("Conexao encerrada pelo cliente.");
+                    isRunning = false;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    isRunning = false;
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
                     isRunning = false;
                 } catch (Exception e) {
                     e.printStackTrace();
+                    isRunning = false;
                 }
             }
         } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();  
-        } catch (Exception ex) {
-            Logger.getLogger(CadastroThreadV2.class.getName()).log(Level.SEVERE, null, ex);
+            e.printStackTrace();
         } finally {
             try {
                 if (!s1.isClosed()) {
