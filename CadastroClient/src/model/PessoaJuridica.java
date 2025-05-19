@@ -15,10 +15,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-/**
- *
- * @author Tiago J P Furtado
- */
+
 @Entity
 @Table(name = "PessoaJuridica")
 @NamedQueries({

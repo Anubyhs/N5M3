@@ -9,11 +9,6 @@ import java.net.Socket;
 import javax.swing.SwingUtilities;
 
 
-/**
- *
- * @author Tiago J P Furtado
- */
-
 public class CadastroClientV2 {
 
     private static volatile boolean isRunning = true;
@@ -52,15 +47,15 @@ public class CadastroClientV2 {
 
             while (isRunning) {
                 // Menu estilizado e mais chamativo
-                System.out.println(ANSI_CYAN + "╔══════════════════════════════════════════════════╗" + ANSI_RESET);
-                System.out.println(ANSI_CYAN + "║" + ANSI_RESET + ANSI_PURPLE + ANSI_BOLD + "               Menu de Opções                   " + ANSI_RESET + ANSI_CYAN + "║" + ANSI_RESET);
-                System.out.println(ANSI_CYAN + "╠══════════════════════════════════════════════════╣" + ANSI_RESET);
-                System.out.println(ANSI_CYAN + "║" + ANSI_RESET + ANSI_BLUE + ANSI_BOLD + "  [L] Listar                                      " + ANSI_RESET + ANSI_CYAN + "║" + ANSI_RESET);
-                System.out.println(ANSI_CYAN + "║" + ANSI_RESET + ANSI_BLUE + ANSI_BOLD + "  [E] Entrada                                     " + ANSI_RESET + ANSI_CYAN + "║" + ANSI_RESET);
-                System.out.println(ANSI_CYAN + "║" + ANSI_RESET + ANSI_BLUE + ANSI_BOLD + "  [S] Saída                                       " + ANSI_RESET + ANSI_CYAN + "║" + ANSI_RESET);
-                System.out.println(ANSI_CYAN + "║" + ANSI_RESET + ANSI_YELLOW + ANSI_BOLD + "  [X] Finalizar                                   " + ANSI_RESET + ANSI_CYAN + "║" + ANSI_RESET);
-                System.out.println(ANSI_CYAN + "╚══════════════════════════════════════════════════╝" + ANSI_RESET);
-                System.out.print(ANSI_PURPLE + ANSI_BOLD + "Escolha uma opção: " + ANSI_RESET);
+                System.out.println(ANSI_BLUE + "╔══════════════════════════════════════════════════╗                                               " + ANSI_RESET);
+                System.out.println(ANSI_BLUE + "║" + ANSI_RESET + ANSI_BLUE + ANSI_BOLD + "               Menu de Opcoes                     " + ANSI_RESET + ANSI_BLUE + "║" + ANSI_RESET);
+                System.out.println(ANSI_BLUE + "╠══════════════════════════════════════════════════╣                                               " + ANSI_RESET);
+                System.out.println(ANSI_BLUE + "║" + ANSI_RESET + ANSI_BLUE + ANSI_BOLD + "  [L] Listar                                      " + ANSI_RESET + ANSI_BLUE + "║" + ANSI_RESET);
+                System.out.println(ANSI_BLUE + "║" + ANSI_RESET + ANSI_BLUE + ANSI_BOLD + "  [E] Entrada                                     " + ANSI_RESET + ANSI_BLUE + "║" + ANSI_RESET);
+                System.out.println(ANSI_BLUE + "║" + ANSI_RESET + ANSI_BLUE + ANSI_BOLD + "  [S] Saida                                       " + ANSI_RESET + ANSI_BLUE + "║" + ANSI_RESET);
+                System.out.println(ANSI_BLUE + "║" + ANSI_RESET + ANSI_BLUE + ANSI_BOLD + "  [X] Finalizar                                   " + ANSI_RESET + ANSI_BLUE + "║" + ANSI_RESET);
+                System.out.println(ANSI_BLUE + "╚══════════════════════════════════════════════════╝" + ANSI_RESET);
+                System.out.print(ANSI_BLUE + ANSI_BOLD + "Escolha uma opcao: " + ANSI_RESET);
                 String comando = reader.readLine();
 
                 // Processamento do comando
@@ -89,11 +84,11 @@ public class CadastroClientV2 {
                     outputStream.writeObject(quantidade);
 
                     // Valor Unitário
-                    System.out.print("Digite o valor unitário: ");
+                    System.out.print("Digite o valor unitario: ");
                     float valorUnitario = Float.parseFloat(reader.readLine());
                     outputStream.writeObject(valorUnitario);
                 } else {
-                    System.out.println(ANSI_YELLOW + "Comando inválido." + ANSI_RESET);
+                    System.out.println(ANSI_YELLOW + "Comando invalido." + ANSI_RESET);
                 }
             }
         } catch (IOException e) {

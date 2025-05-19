@@ -7,10 +7,7 @@ import java.net.Socket;
 import java.util.List;
 import model.Produto;
 
-/**
- *
- * @author Tiago J P Furtado
- */
+
 public class CadastroClient {
 
     // Códigos ANSI para cores e estilo

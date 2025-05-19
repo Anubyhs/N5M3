@@ -13,10 +13,7 @@ import java.util.List;
 import java.util.Map;
 import model.Produto;
 
-/**
- *
- * @author Tiago J P Furtado
- */
+
 public class ThreadClient extends Thread {
 
     private ObjectInputStream entrada;

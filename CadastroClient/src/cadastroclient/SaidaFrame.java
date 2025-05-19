@@ -7,15 +7,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-/**
- *
- * @author Tiago J P Furtado
- */
 
-/**
- * SaidaFrame é uma classe personalizada que exibe uma janela de diálogo com uma
- * área de texto onde as mensagens são exibidas.
- */
 public class SaidaFrame extends JFrame {  // Mudança de JDialog para JFrame
 
     private JTextArea texto;

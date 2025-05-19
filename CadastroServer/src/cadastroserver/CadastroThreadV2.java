@@ -140,7 +140,7 @@ public class CadastroThreadV2 extends Thread {
                 }
             }
         } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();  ão
+            e.printStackTrace();  
         } catch (Exception ex) {
             Logger.getLogger(CadastroThreadV2.class.getName()).log(Level.SEVERE, null, ex);
         } finally {

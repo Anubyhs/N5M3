@@ -203,7 +203,12 @@ public class UsuarioJpaController implements Serializable {
             Query query = em.createQuery("SELECT u FROM Usuario u WHERE u.login = :login AND u.senha = :senha");
             query.setParameter("login", login);
             query.setParameter("senha", senha);
-            return (Usuario) query.getSingleResult();
+            List<Usuario> results = query.getResultList();
+            if (results.isEmpty()) {
+                return null;
+            } else {
+                return results.get(0); // Retorna o primeiro usuário encontrado
+            }
         } catch (NoResultException e) {
             return null;
         } finally {

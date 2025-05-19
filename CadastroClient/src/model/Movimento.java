@@ -13,15 +13,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
-/**
- * Classe Movimento que representa uma transação de entrada ou saída de produtos.
- */
 
-
-/**
- *
- * @author Tiago J P Furtado
- */
 
 
 @Entity

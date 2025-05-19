@@ -23,11 +23,11 @@ public class CadastroServer {
 
     public static void main(String[] args) throws IOException {
         // Exibe uma mensagem de boas-vindas ao iniciar o servidor
-        System.out.println(ANSI_GREEN + "╔══════════════════════════════════════════════════════════════════╗");
+        System.out.println(ANSI_BLUE + "╔══════════════════════════════════════════════════════════════════╗");
         System.out.println("║                                                                  ║");
-        System.out.println("║    " + ANSI_BLUE + ANSI_BOLD + "BEM-VINDO AO CADASTROSERVER!" + ANSI_RESET + ANSI_GREEN + "                              ║");
+        System.out.println("║    " + ANSI_BLUE + ANSI_BOLD + "BEM-VINDO AO CADASTROSERVER FRANCINALDO!" + ANSI_RESET + ANSI_BLUE + "                      ║");
         System.out.println("║                                                                  ║");
-        System.out.println("║    " + ANSI_YELLOW + ANSI_BOLD + "POR FAVOR, AGUARDE A CONEXÃO..." + ANSI_RESET + ANSI_GREEN + "                         ║");
+        System.out.println("║    " + ANSI_BLUE + ANSI_BOLD + "POR FAVOR, AGUARDE A CONEXAO..." + ANSI_RESET + ANSI_BLUE + "                               ║");
         System.out.println("║                                                                  ║");
         System.out.println("╚══════════════════════════════════════════════════════════════════╝" + ANSI_RESET);
 
