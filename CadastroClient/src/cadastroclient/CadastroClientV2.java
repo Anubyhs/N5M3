@@ -58,54 +58,106 @@ public class CadastroClientV2 {
 
             while (isRunning) {
                 // Menu estilizado
-                System.out.println(ANSI_BLUE + "╔══════════════════════════════════════════════════╗");
-                System.out.println(ANSI_BLUE + "║" + ANSI_RESET + ANSI_BLUE + ANSI_BOLD + "                  Menu de Opcoes                    " + ANSI_RESET + ANSI_BLUE + "║");
-                System.out.println(ANSI_BLUE + "╠══════════════════════════════════════════════════╣");
-                System.out.println(ANSI_BLUE + "║" + ANSI_RESET + ANSI_BLUE + ANSI_BOLD + "  [L] Listar                                        " + ANSI_RESET + ANSI_BLUE + "║");
-                System.out.println(ANSI_BLUE + "║" + ANSI_RESET + ANSI_BLUE + ANSI_BOLD + "  [E] Entrada                                       " + ANSI_RESET + ANSI_BLUE + "║");
-                System.out.println(ANSI_BLUE + "║" + ANSI_RESET + ANSI_BLUE + ANSI_BOLD + "  [S] Saida                                         " + ANSI_RESET + ANSI_BLUE + "║");
-                System.out.println(ANSI_BLUE + "║" + ANSI_RESET + ANSI_BLUE + ANSI_BOLD + "  [X] Finalizar                                     " + ANSI_RESET + ANSI_BLUE + "║");
-                System.out.println(ANSI_BLUE + "╚══════════════════════════════════════════════════╝" + ANSI_RESET);
-                System.out.print(ANSI_BLUE + ANSI_BOLD + "Escolha uma opcao: " + ANSI_RESET);
+                System.out.println("\n=== MENU DE OPÇÕES ===");
+                System.out.println("[C] Cadastrar/Atualizar Produto");
+                System.out.println("[L] Listar Produtos");
+                System.out.println("[E] Entrada de Produtos");
+                System.out.println("[S] Saída de Produtos");
+                System.out.println("[ME] Movimentações de Entrada");
+                System.out.println("[MS] Movimentações de Saída");
+                System.out.println("[X] Finalizar");
+                System.out.print("\nEscolha uma opção: ");
                 
                 String comando = reader.readLine();
                 System.out.println("CLIENTE: Comando digitado pelo usuário: '" + comando + "'");
 
                 // Processamento do comando
-                if (comando.equalsIgnoreCase("L")) {
-                    outputStream.writeObject("L");
-                    System.out.println("CLIENTE: Enviado comando 'L' para o servidor.");
-                } else if (comando.equalsIgnoreCase("X")) {
-                    outputStream.writeObject("X"); // *** CORREÇÃO: ENVIAR 'X' PARA O SERVIDOR ANTES DE FINALIZAR ***
-                    System.out.println("CLIENTE: Enviado comando 'X' para o servidor. Finalizando...");
-                    isRunning = false; // Define a condição de saída da thread
-                    break; // Sai do loop principal
-                } else if (comando.equalsIgnoreCase("E") || comando.equalsIgnoreCase("S")) {
-                    outputStream.writeObject(comando);
-                    System.out.println("CLIENTE: Enviado comando '" + comando + "' para o servidor.");
-
-                    System.out.print("Digite o ID da pessoa: ");
-                    int pessoaId = Integer.parseInt(reader.readLine());
-                    outputStream.writeObject(pessoaId);
-                    System.out.println("CLIENTE: Enviado ID Pessoa: " + pessoaId);
-
-                    System.out.print("Digite o ID do produto: ");
-                    int produtoId = Integer.parseInt(reader.readLine());
-                    outputStream.writeObject(produtoId);
-                    System.out.println("CLIENTE: Enviado ID Produto: " + produtoId);
-
-                    System.out.print("Digite a quantidade: ");
-                    int quantidade = Integer.parseInt(reader.readLine());
-                    outputStream.writeObject(quantidade);
-                    System.out.println("CLIENTE: Enviado Quantidade: " + quantidade);
-
-                    System.out.print("Digite o valor unitario: ");
-                    float valorUnitario = Float.parseFloat(reader.readLine());
-                    outputStream.writeObject(valorUnitario);
-                    System.out.println("CLIENTE: Enviado Valor Unitário: " + valorUnitario);
-
-                } else {
-                    System.out.println(ANSI_YELLOW + "Comando invalido. Por favor, tente novamente." + ANSI_RESET);
+                switch (comando.toUpperCase()) {
+                    case "C": {
+                        outputStream.writeObject("C");
+                        System.out.println("CLIENTE: Enviado comando 'C' para o servidor.");
+                        
+                        outputStream.writeObject(0);
+                        
+                        System.out.print("Digite o nome do produto: ");
+                        String nome = reader.readLine();
+                        outputStream.writeObject(nome);
+                        
+                        System.out.print("Digite a quantidade: ");
+                        int quantidade = Integer.parseInt(reader.readLine());
+                        outputStream.writeObject(quantidade);
+                        
+                        System.out.print("Digite o preço unitário: ");
+                        float precoUnitario = Float.parseFloat(reader.readLine());
+                        outputStream.writeObject(precoUnitario);
+                        break;
+                    }
+                    case "L": {
+                        outputStream.writeObject("L");
+                        System.out.println("CLIENTE: Enviado comando 'L' para o servidor.");
+                        break;
+                    }
+                    case "E": {
+                        outputStream.writeObject("E");
+                        System.out.println("CLIENTE: Enviado comando 'E' para o servidor.");
+                        
+                        System.out.print("Digite o ID da pessoa: ");
+                        int pessoaId = Integer.parseInt(reader.readLine());
+                        outputStream.writeObject(pessoaId);
+                        
+                        System.out.print("Digite o ID do produto: ");
+                        int produtoId = Integer.parseInt(reader.readLine());
+                        outputStream.writeObject(produtoId);
+                        
+                        System.out.print("Digite a quantidade: ");
+                        int quantidade = Integer.parseInt(reader.readLine());
+                        outputStream.writeObject(quantidade);
+                        
+                        System.out.print("Digite o valor unitário: ");
+                        float valorUnitario = Float.parseFloat(reader.readLine());
+                        outputStream.writeObject(valorUnitario);
+                        break;
+                    }
+                    case "S": {
+                        outputStream.writeObject("S");
+                        System.out.println("CLIENTE: Enviado comando 'S' para o servidor.");
+                        
+                        System.out.print("Digite o ID da pessoa: ");
+                        int pessoaId = Integer.parseInt(reader.readLine());
+                        outputStream.writeObject(pessoaId);
+                        
+                        System.out.print("Digite o ID do produto: ");
+                        int produtoId = Integer.parseInt(reader.readLine());
+                        outputStream.writeObject(produtoId);
+                        
+                        System.out.print("Digite a quantidade: ");
+                        int quantidade = Integer.parseInt(reader.readLine());
+                        outputStream.writeObject(quantidade);
+                        
+                        System.out.print("Digite o valor unitário: ");
+                        float valorUnitario = Float.parseFloat(reader.readLine());
+                        outputStream.writeObject(valorUnitario);
+                        break;
+                    }
+                    case "ME": {
+                        outputStream.writeObject("ME");
+                        System.out.println("CLIENTE: Enviado comando 'ME' para o servidor.");
+                        break;
+                    }
+                    case "MS": {
+                        outputStream.writeObject("MS");
+                        System.out.println("CLIENTE: Enviado comando 'MS' para o servidor.");
+                        break;
+                    }
+                    case "X": {
+                        outputStream.writeObject("X");
+                        System.out.println("CLIENTE: Enviado comando 'X' para o servidor. Finalizando...");
+                        isRunning = false;
+                        break;
+                    }
+                    default:
+                        System.out.println("Comando inválido. Por favor, tente novamente.");
+                        break;
                 }
             }
         } catch (IOException e) {

@@ -1,6 +1,7 @@
 package model;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -43,6 +44,10 @@ public class Movimento implements Serializable {
     @Column(name = "valorUnitario")
     private Float valorUnitario;
 
+    @Basic(optional = false)
+    @Column(name = "dataMovimento")
+    private LocalDateTime dataMovimento;
+
     @JoinColumn(name = "idPessoa", referencedColumnName = "idPessoa")
     @ManyToOne(optional = false)
     private Pessoa pessoa;
@@ -62,6 +67,7 @@ public class Movimento implements Serializable {
         this.quantidade = quantidade;
         this.tipo = tipo;
         this.valorUnitario = valorUnitario;
+        this.dataMovimento = LocalDateTime.now();
     }
 
     public Integer getIdMovimento() {
@@ -94,6 +100,14 @@ public class Movimento implements Serializable {
 
     public void setValorUnitario(Float valorUnitario) {
         this.valorUnitario = valorUnitario;
+    }
+
+    public LocalDateTime getDataMovimento() {
+        return dataMovimento;
+    }
+
+    public void setDataMovimento(LocalDateTime dataMovimento) {
+        this.dataMovimento = dataMovimento;
     }
 
     public Pessoa getPessoa() {

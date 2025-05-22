@@ -27,8 +27,8 @@ public class CadastroClient {
         ObjectOutputStream out = new ObjectOutputStream(s1.getOutputStream());
         ObjectInputStream in = new ObjectInputStream(s1.getInputStream());
         
-        out.writeObject("op1"); // usuário
-        out.writeObject("op1"); // senha
+        out.writeObject("loja"); // usuário
+        out.writeObject("loja"); // senha
         out.writeObject("L"); // comando       
                   
         // Receber a lista de produtos

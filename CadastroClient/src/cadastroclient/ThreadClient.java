@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import model.Produto;
+import model.Movimento;
 
 
 public class ThreadClient extends Thread {
@@ -43,56 +44,76 @@ public class ThreadClient extends Thread {
                         EventQueue.invokeLater(() -> {
                             saidaFrame.adicionarMensagem(mensagem);
                         });
-                    } // Se o objeto for do tipo List, presume-se que é uma lista de Produtos
+                    } // Se o objeto for do tipo List, verifica o tipo de lista
                     else if (obj instanceof List) {
-                        List<Produto> produtos = (List<Produto>) obj;
-                        // Atualiza a interface gráfica na thread de eventos do Swing
-                        EventQueue.invokeLater(() -> {
-                            // Exibe a mensagem de sucesso
-                            saidaFrame.adicionarMensagem("\n");
-                            saidaFrame.adicionarMensagem("Movimentação realizada com sucesso!");
-                            saidaFrame.adicionarMensagem("================================================================================");
-                            saidaFrame.adicionarMensagem(String.format("%-40s %15s %15s %20s", "Nome do Produto", "Quantidade", "Valor Unitário", "Valor Total"));
-                            saidaFrame.adicionarMensagem("================================================================================");
+                        List<?> lista = (List<?>) obj;
+                        if (!lista.isEmpty() && lista.get(0) instanceof Produto) {
+                            List<Produto> produtos = (List<Produto>) lista;
+                            // Atualiza a interface gráfica na thread de eventos do Swing
+                            EventQueue.invokeLater(() -> {
+                                // Exibe o cabeçalho da lista de produtos
+                                saidaFrame.adicionarMensagem("\n");
+                                saidaFrame.adicionarMensagem("LISTA DE PRODUTOS");
+                                saidaFrame.adicionarMensagem("==============================================================================================================");
+                                saidaFrame.adicionarMensagem(String.format("%-5s | %-30s | %-15s | %-20s | %-20s",
+                                        "ID", "Nome do Produto", "Quantidade", "Valor Unitário", "Valor Total"));
+                                saidaFrame.adicionarMensagem("==============================================================================================================");
 
-                            // Para cada produto na lista recebida
-                            for (Produto produto : produtos) {
-                                // Formata o valor unitário
-                                String valorUnitarioFormatado = formatarValor(produto.getPrecoVenda());
-                                // Calcula o valor total (quantidade * valor unitário)
-                                BigDecimal valorTotal = produto.getPrecoVenda().multiply(new BigDecimal(produto.getQuantidade()));
-                                String valorTotalFormatado = formatarValor(valorTotal);
+                                // Para cada produto na lista
+                                for (Produto produto : produtos) {
+                                    String valorUnitarioFormatado = formatarValor(produto.getPrecoVenda());
+                                    BigDecimal valorTotal = produto.getPrecoVenda().multiply(new BigDecimal(produto.getQuantidade()));
+                                    String valorTotalFormatado = formatarValor(valorTotal);
 
-                                // Captura a data e hora atual
-                                LocalDateTime dataHora = LocalDateTime.now();
-                                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-                                String dataHoraFormatada = dataHora.format(formatter);
-
-                                // Verifica se houve alteração no valor total
-                                BigDecimal valorTotalAnterior = valoresTotaisAnteriores.get(produto.getNome());
-                                if (valorTotalAnterior == null || valorTotal.compareTo(valorTotalAnterior) != 0) {
-                                    // Exibe as informações no JTextArea com formatação para alinhamento
-                                    saidaFrame.adicionarMensagem(String.format("%-40s %15d %15s %20s",
+                                    // Formata a linha do produto com colunas alinhadas
+                                    // Ajustando as larguras e usando alinhamento à direita para valores numéricos
+                                    String linha = String.format("%-5d | %-30s | %10d | %15s | %15s",
+                                            produto.getIdProduto(),
                                             produto.getNome(),
                                             produto.getQuantidade(),
                                             valorUnitarioFormatado,
-                                            valorTotalFormatado));
-
-                                    saidaFrame.adicionarMensagem("================================================================================");
-
-                                    saidaFrame.adicionarMensagem(String.format("Quantidade do produto '%s' alterada para %d.",
-                                            produto.getNome(),
-                                            produto.getQuantidade()));
-                                    saidaFrame.adicionarMensagem(String.format("Valor total do produto '%s' alterado para %s.",
-                                            produto.getNome(), valorTotalFormatado));
-                                    saidaFrame.adicionarMensagem(String.format("Alteração feita em: %s por %s",
-                                            dataHoraFormatada, usuario));
-                                    valoresTotaisAnteriores.put(produto.getNome(), valorTotal);
-                                    saidaFrame.adicionarMensagem("\n");
-                                    saidaFrame.adicionarMensagem("================================================================================");
+                                            valorTotalFormatado);
+                                    
+                                    saidaFrame.adicionarMensagem(linha);
                                 }
-                            }
-                        });
+                                saidaFrame.adicionarMensagem("==============================================================================================================");
+                            });
+                        } else if (!lista.isEmpty() && lista.get(0) instanceof Movimento) {
+                            List<Movimento> movimentos = (List<Movimento>) lista;
+                            // Atualiza a interface gráfica na thread de eventos do Swing
+                            EventQueue.invokeLater(() -> {
+                                // Exibe o cabeçalho da lista de movimentações
+                                saidaFrame.adicionarMensagem("\n");
+                                saidaFrame.adicionarMensagem("MOVIMENTAÇÕES");
+                                saidaFrame.adicionarMensagem("=======================================================================================================================================");
+                                saidaFrame.adicionarMensagem(String.format("%-5s | %-20s | %-10s | %-12s | %-15s | %-15s | %-20s", 
+                                    "ID", "Data/Hora", "Tipo", "Quantidade", "Valor Unitário", "Valor Total", "Usuário"));
+                                saidaFrame.adicionarMensagem("=======================================================================================================================================");
+
+                                // Para cada movimentação na lista
+                                for (Movimento movimento : movimentos) {
+                                    String tipo = movimento.getTipo() == 'E' ? "ENTRADA" : "SAÍDA";
+                                    String dataHora = (movimento.getDataMovimento() != null) ? movimento.getDataMovimento().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")) : "";
+                                    String usuarioMovimento = (movimento.getUsuario() != null) ? movimento.getUsuario().getLogin() : "";
+
+                                    BigDecimal quantidadeBD = new BigDecimal(movimento.getQuantidade());
+                                    BigDecimal valorUnitarioBD = new BigDecimal(movimento.getValorUnitario());
+                                    BigDecimal valorTotalBD = quantidadeBD.multiply(valorUnitarioBD);
+                                    String valorTotalFormatado = formatarValor(valorTotalBD);
+                                    String valorUnitarioFormatado = formatarValor(valorUnitarioBD);
+
+                                    saidaFrame.adicionarMensagem(String.format("%-5d | %-20s | %-10s | %-12d | %-15s | %-15s | %-20s",
+                                            movimento.getIdMovimento(),
+                                            dataHora,
+                                            tipo,
+                                            movimento.getQuantidade(),
+                                            valorUnitarioFormatado,
+                                            valorTotalFormatado,
+                                            usuarioMovimento));
+                                }
+                                saidaFrame.adicionarMensagem("=======================================================================================================================================");
+                            });
+                        }
                     }
                 } catch (SocketException se) {
                     // Socket foi fechado, termina o loop

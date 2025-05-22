@@ -8,10 +8,12 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.math.BigDecimal;
 import java.net.Socket;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.stream.Collectors;
 import model.Movimento;
 import model.Pessoa;
 import model.Produto;
@@ -64,6 +66,60 @@ public class CadastroThreadV2 extends Thread {
                     System.out.println("SERVIDOR: Recebeu comando: '" + comando + "'");
 
                     switch (comando) {
+                        case "C": {
+                            int idProduto = (int) in.readObject();
+                            String nome = (String) in.readObject();
+                            int quantidade = (int) in.readObject();
+                            float precoUnitario = (float) in.readObject();
+                            
+                            // Busca todos os produtos para verificar se já existe um com o mesmo nome
+                            List<Produto> produtos = ctrlProduto.findProdutoEntities();
+                            Produto produtoExistente = produtos.stream()
+                                .filter(p -> p.getNome().equalsIgnoreCase(nome))
+                                .findFirst()
+                                .orElse(null);
+                            
+                            if (produtoExistente != null) {
+                                // Se encontrou um produto com o mesmo nome, atualiza ele
+                                produtoExistente.setQuantidade(quantidade);
+                                produtoExistente.setPrecoVenda(new BigDecimal(precoUnitario));
+                                ctrlProduto.edit(produtoExistente);
+                                out.writeObject("Produto atualizado com sucesso! (ID: " + produtoExistente.getIdProduto() + ")");
+                            } else {
+                                // Se não encontrou, cria um novo produto
+                                Produto novoProduto = new Produto();
+                                novoProduto.setNome(nome);
+                                novoProduto.setQuantidade(quantidade);
+                                novoProduto.setPrecoVenda(new BigDecimal(precoUnitario));
+                                ctrlProduto.create(novoProduto);
+                                out.writeObject("Novo produto cadastrado com sucesso! (ID: " + novoProduto.getIdProduto() + ")");
+                            }
+                            break;
+                        }
+                        case "L": {
+                            List<Produto> produtos = ctrlProduto.findProdutoEntities();
+                            out.writeObject(produtos);
+                            System.out.println("SERVIDOR: Enviou lista de produtos para o cliente.");
+                            break;
+                        }
+                        case "ME": {
+                            List<Movimento> movimentos = ctrlMov.findMovimentoEntities();
+                            List<Movimento> entradas = movimentos.stream()
+                                .filter(m -> m.getTipo() == 'E')
+                                .collect(Collectors.toList());
+                            out.writeObject(entradas);
+                            System.out.println("SERVIDOR: Enviou lista de movimentações de entrada.");
+                            break;
+                        }
+                        case "MS": {
+                            List<Movimento> movimentos = ctrlMov.findMovimentoEntities();
+                            List<Movimento> saidas = movimentos.stream()
+                                .filter(m -> m.getTipo() == 'S')
+                                .collect(Collectors.toList());
+                            out.writeObject(saidas);
+                            System.out.println("SERVIDOR: Enviou lista de movimentações de saída.");
+                            break;
+                        }
                         case "E": {
                             int idPessoa = (int) in.readObject();
                             int idProduto = (int) in.readObject();
@@ -160,13 +216,6 @@ public class CadastroThreadV2 extends Thread {
                             List<Produto> produtosAtualizados = ctrlProduto.findProdutoEntities();
                             out.writeObject(produtosAtualizados); // Envia a lista atualizada
                             System.out.println("SERVIDOR: Movimento de Saída registrado e lista de produtos atualizada enviada.");
-                            break;
-                        }
-
-                        case "L": {
-                            List<Produto> produtos = ctrlProduto.findProdutoEntities();
-                            out.writeObject(produtos);
-                            System.out.println("SERVIDOR: Enviou lista de produtos para o cliente.");
                             break;
                         }
 
