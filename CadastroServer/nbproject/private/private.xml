@@ -3,7 +3,9 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Adm/OneDrive/FULLSTACK/N5M3/CadastroServer/src/cadastroserver/CadastroThread.java</file>
+            <file>file:/C:/Users/Adm/OneDrive/FULLSTACK/N5M3/CadastroServer/src/model/Produto.java</file>
+            <file>file:/C:/Users/Adm/OneDrive/FULLSTACK/N5M3/CadastroServer/src/controller/ProdutoJpaController.java</file>
+            <file>file:/C:/Users/Adm/OneDrive/FULLSTACK/N5M3/CadastroServer/src/cadastroserver/CadastroServer.java</file>
         </group>
     </open-files>
 </project-private>
