@@ -34,7 +34,7 @@ public class Movimento implements Serializable {
 
     @Basic(optional = false)
     @Column(name = "quantidade")
-    private int quantidade;
+    private Integer quantidade; // ALTERADO: Era 'int', agora é 'Integer'
 
     @Basic(optional = false)
     @Column(name = "tipo")
@@ -63,7 +63,8 @@ public class Movimento implements Serializable {
     public Movimento() {
     }
 
-    public Movimento(int quantidade, Character tipo, Float valorUnitario) {
+    // Ajuste o construtor, se necessário, para aceitar Integer
+    public Movimento(Integer quantidade, Character tipo, Float valorUnitario) {
         this.quantidade = quantidade;
         this.tipo = tipo;
         this.valorUnitario = valorUnitario;
@@ -78,11 +79,11 @@ public class Movimento implements Serializable {
         this.idMovimento = idMovimento;
     }
 
-    public int getQuantidade() {
+    public Integer getQuantidade() { // ALTERADO: Era 'int', agora é 'Integer'
         return quantidade;
     }
 
-    public void setQuantidade(int quantidade) {
+    public void setQuantidade(Integer quantidade) { // ALTERADO: Era 'int', agora é 'Integer'
         this.quantidade = quantidade;
     }
 

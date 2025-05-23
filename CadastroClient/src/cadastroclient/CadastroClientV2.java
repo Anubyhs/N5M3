@@ -12,7 +12,7 @@ public class CadastroClientV2 {
 
     private static volatile boolean isRunning = true;
 
-    // Códigos ANSI para cores
+    // Codigos ANSI para cores
     private static final String ANSI_RESET = "\u001B[0m";
     private static final String ANSI_BLUE = "\u001B[34m";
     private static final String ANSI_YELLOW = "\u001B[33m";
@@ -38,11 +38,11 @@ public class CadastroClientV2 {
             outputStream.writeObject(senha);
             System.out.println("CLIENTE: Login e senha enviados.");
 
-            // Esperar a resposta de autenticação do servidor
+            // Esperar a resposta de autenticacao do servidor
             String authResponse = (String) inputStream.readObject();
             if (authResponse.startsWith("ERRO:")) {
                 System.out.println(ANSI_YELLOW + authResponse + ANSI_RESET);
-                System.exit(0); // Sai se o login for inválido
+                System.exit(0); // Sai se o login for invalido
             } else {
                 System.out.println(ANSI_GREEN + authResponse + ANSI_RESET);
             }
@@ -51,47 +51,25 @@ public class CadastroClientV2 {
             SaidaFrame saidaFrame = new SaidaFrame(login);
             SwingUtilities.invokeLater(() -> saidaFrame.setVisible(true));
 
-            // Instanciar a Thread para comunicação com o servidor.
+            // Instanciar a Thread para comunicacao com o servidor.
             ThreadClient threadClient = new ThreadClient(inputStream, saidaFrame, login);
             threadClient.start();
             System.out.println("CLIENTE: ThreadClient iniciada.");
 
             while (isRunning) {
                 // Menu estilizado
-                System.out.println("\n=== MENU DE OPÇÕES ===");
-                System.out.println("[C] Cadastrar/Atualizar Produto");
+                System.out.println("\n=== MENU DE OPCOES DA LOJA DE FRANCINALDO ===");
                 System.out.println("[L] Listar Produtos");
                 System.out.println("[E] Entrada de Produtos");
-                System.out.println("[S] Saída de Produtos");
-                System.out.println("[ME] Movimentações de Entrada");
-                System.out.println("[MS] Movimentações de Saída");
+                System.out.println("[S] Saida de Produtos");
                 System.out.println("[X] Finalizar");
-                System.out.print("\nEscolha uma opção: ");
+                System.out.print("\nEscolha uma opcao: ");
                 
                 String comando = reader.readLine();
-                System.out.println("CLIENTE: Comando digitado pelo usuário: '" + comando + "'");
+                System.out.println("CLIENTE: Comando digitado pelo usuario: '" + comando + "'");
 
                 // Processamento do comando
                 switch (comando.toUpperCase()) {
-                    case "C": {
-                        outputStream.writeObject("C");
-                        System.out.println("CLIENTE: Enviado comando 'C' para o servidor.");
-                        
-                        outputStream.writeObject(0);
-                        
-                        System.out.print("Digite o nome do produto: ");
-                        String nome = reader.readLine();
-                        outputStream.writeObject(nome);
-                        
-                        System.out.print("Digite a quantidade: ");
-                        int quantidade = Integer.parseInt(reader.readLine());
-                        outputStream.writeObject(quantidade);
-                        
-                        System.out.print("Digite o preço unitário: ");
-                        float precoUnitario = Float.parseFloat(reader.readLine());
-                        outputStream.writeObject(precoUnitario);
-                        break;
-                    }
                     case "L": {
                         outputStream.writeObject("L");
                         System.out.println("CLIENTE: Enviado comando 'L' para o servidor.");
@@ -113,7 +91,7 @@ public class CadastroClientV2 {
                         int quantidade = Integer.parseInt(reader.readLine());
                         outputStream.writeObject(quantidade);
                         
-                        System.out.print("Digite o valor unitário: ");
+                        System.out.print("Digite o valor unitario: ");
                         float valorUnitario = Float.parseFloat(reader.readLine());
                         outputStream.writeObject(valorUnitario);
                         break;
@@ -134,19 +112,9 @@ public class CadastroClientV2 {
                         int quantidade = Integer.parseInt(reader.readLine());
                         outputStream.writeObject(quantidade);
                         
-                        System.out.print("Digite o valor unitário: ");
+                        System.out.print("Digite o valor unitario: ");
                         float valorUnitario = Float.parseFloat(reader.readLine());
                         outputStream.writeObject(valorUnitario);
-                        break;
-                    }
-                    case "ME": {
-                        outputStream.writeObject("ME");
-                        System.out.println("CLIENTE: Enviado comando 'ME' para o servidor.");
-                        break;
-                    }
-                    case "MS": {
-                        outputStream.writeObject("MS");
-                        System.out.println("CLIENTE: Enviado comando 'MS' para o servidor.");
                         break;
                     }
                     case "X": {
@@ -156,18 +124,18 @@ public class CadastroClientV2 {
                         break;
                     }
                     default:
-                        System.out.println("Comando inválido. Por favor, tente novamente.");
+                        System.out.println("Comando invalido. Por favor, tente novamente.");
                         break;
                 }
             }
         } catch (IOException e) {
-            System.err.println("CLIENTE: Erro de I/O ou conexão: " + e.getMessage());
+            System.err.println("CLIENTE: Erro de I/O ou conexao: " + e.getMessage());
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
-            System.err.println("CLIENTE: Classe não encontrada ao deserializar objeto: " + e.getMessage());
+            System.err.println("CLIENTE: Classe nao encontrada ao deserializar objeto: " + e.getMessage());
             e.printStackTrace();
         } finally {
-            System.out.println("CLIENTE: Aplicação cliente finalizada.");
+            System.out.println("CLIENTE: Aplicacao cliente finalizada.");
             System.exit(0);
         }
     }

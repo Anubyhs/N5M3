@@ -42,22 +42,22 @@ public class CadastroThread extends Thread {
             Usuario usuario = null; // Inicializa usuario
 
             if (usuarios.isEmpty()) {
-                System.out.println("Usuário inválido");
-                out.writeObject("ERRO: Usuário inválido"); // Envia erro ao cliente
+                System.out.println("Usuario invalido");
+                out.writeObject("ERRO: Usuario invalido"); // Envia erro ao cliente
                 s1.close();
                 return;
             } else {
                 // Se houver múltiplos usuários, você pode implementar uma lógica para escolher um.
                 // Por enquanto, pegamos o primeiro da lista.
                 usuario = usuarios.get(0);
-                System.out.println("Usuário conectado com sucesso para: " + usuario.getLogin());
-                out.writeObject("OK: Usuário conectado"); // Envia confirmação ao cliente
+                System.out.println("Usuario conectado com sucesso para: " + usuario.getLogin());
+                out.writeObject("OK: Usuario conectado"); // Envia confirmação ao cliente
             }
 
             // Obter a data e hora atuais
             LocalDateTime now = LocalDateTime.now();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-            System.out.println("Conexão estabelecida em: " + now.format(formatter));
+            System.out.println("Conexao estabelecida em: " + now.format(formatter));
 
             boolean conectado = true;
             while (conectado) {
@@ -71,11 +71,11 @@ public class CadastroThread extends Thread {
                         conectado = false;
                         out.writeObject("OK: Desconectado");
                     } else {
-                        System.out.println("Comando inválido recebido: " + comando);
-                        out.writeObject("ERRO: Comando inválido");
+                        System.out.println("Comando invalido recebido: " + comando);
+                        out.writeObject("ERRO: Comando invalido");
                     }
                 } catch (EOFException e) {
-                    System.out.println("Conexão encerrada pelo cliente.");
+                    System.out.println("Conexao encerrada pelo cliente.");
                     conectado = false;
                 } catch (IOException | ClassNotFoundException e) {
                     e.printStackTrace();

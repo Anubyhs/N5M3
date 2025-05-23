@@ -10,7 +10,7 @@ import model.Produto;
 
 public class CadastroClient {
 
-    // Códigos ANSI para cores e estilo
+    // Codigos ANSI para cores e estilo
     private static final String ANSI_RESET = "\u001B[0m";
     private static final String ANSI_BLUE = "\u001B[34m";
     private static final String ANSI_YELLOW = "\u001B[33m";
@@ -23,11 +23,11 @@ public class CadastroClient {
         // Instanciar um Socket apontando para localhost, na porta 4321.
         Socket s1 = new Socket("localhost", 4321);
         
-        // Encapsular os canais de entrada e saída.
+        // Encapsular os canais de entrada e saida.
         ObjectOutputStream out = new ObjectOutputStream(s1.getOutputStream());
         ObjectInputStream in = new ObjectInputStream(s1.getInputStream());
         
-        out.writeObject("loja"); // usuário
+        out.writeObject("loja"); // usuario
         out.writeObject("loja"); // senha
         out.writeObject("L"); // comando       
                   
@@ -36,7 +36,7 @@ public class CadastroClient {
 
         // Exibir a lista de produtos 
         System.out.println(ANSI_GREEN + "╔══════════════════════════════════════════════════╗");
-        System.out.println("║              " + ANSI_BOLD + "LISTA DE PRODUTOS DISPONÍVEIS" + ANSI_RESET + ANSI_GREEN + "              ║");
+        System.out.println("║              " + ANSI_BOLD + "LISTA DE PRODUTOS DISPONIVEIS" + ANSI_RESET + ANSI_GREEN + "              ║");
         System.out.println("╚══════════════════════════════════════════════════╝" + ANSI_RESET);
 
         int index = 1;
@@ -47,7 +47,7 @@ public class CadastroClient {
             index++;
         }
 
-        // Fechar a conexão.
+        // Fechar a conexao.
         s1.close();
     }
 }

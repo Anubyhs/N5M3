@@ -53,7 +53,7 @@ public class ThreadClient extends Thread {
                             EventQueue.invokeLater(() -> {
                                 // Exibe o cabeçalho da lista de produtos
                                 saidaFrame.adicionarMensagem("\n");
-                                saidaFrame.adicionarMensagem("LISTA DE PRODUTOS");
+                                saidaFrame.adicionarMensagem("LISTA DE PRODUTOS LOJA FRANCINALDO");
                                 saidaFrame.adicionarMensagem("==============================================================================================================");
                                 saidaFrame.adicionarMensagem(String.format("%-5s | %-30s | %-15s | %-20s | %-20s",
                                         "ID", "Nome do Produto", "Quantidade", "Valor Unitário", "Valor Total"));
@@ -78,6 +78,55 @@ public class ThreadClient extends Thread {
                                 }
                                 saidaFrame.adicionarMensagem("==============================================================================================================");
                             });
+                            
+                            // *** Adicionado: Espera e exibe a lista de movimentações ***
+                            try {
+                                Object objMov = entrada.readObject();
+                                if (objMov instanceof List && !((List<?>) objMov).isEmpty() && ((List<?>) objMov).get(0) instanceof Movimento) {
+                                    List<Movimento> movimentos = (List<Movimento>) objMov;
+                                    EventQueue.invokeLater(() -> {
+                                        saidaFrame.adicionarMensagem("\n");
+                                        saidaFrame.adicionarMensagem("MOVIMENTACOES COMPLETAS");
+                                        saidaFrame.adicionarMensagem("=======================================================================================================================================");
+                                        saidaFrame.adicionarMensagem(String.format("%-5s | %-20s | %-10s | %-12s | %-15s | %-15s | %-20s", 
+                                            "ID", "Data/Hora", "Tipo", "Quantidade", "Valor Unitario", "Valor Total", "Usuario"));
+                                        saidaFrame.adicionarMensagem("=======================================================================================================================================");
+
+                                        for (Movimento movimento : movimentos) {
+                                            String tipo = movimento.getTipo() == 'E' ? "ENTRADA" : "SAIDA";
+                                            String dataHora = (movimento.getDataMovimento() != null) ? movimento.getDataMovimento().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")) : "";
+                                            String usuarioMovimento = (movimento.getUsuario() != null) ? movimento.getUsuario().getLogin() : "";
+
+                                            BigDecimal quantidadeBD = new BigDecimal(movimento.getQuantidade());
+                                            BigDecimal valorUnitarioBD = new BigDecimal(movimento.getValorUnitario());
+                                            BigDecimal valorTotalBD = quantidadeBD.multiply(valorUnitarioBD);
+                                            String valorTotalFormatado = formatarValor(valorTotalBD);
+                                            String valorUnitarioFormatado = formatarValor(valorUnitarioBD);
+
+                                            saidaFrame.adicionarMensagem(String.format("%-5d | %-20s | %-10s | %-12d | %-15s | %-15s | %-20s",
+                                                    movimento.getIdMovimento(),
+                                                    dataHora,
+                                                    tipo,
+                                                    movimento.getQuantidade(),
+                                                    valorUnitarioFormatado,
+                                                    valorTotalFormatado,
+                                                    usuarioMovimento));
+                                        }
+                                        saidaFrame.adicionarMensagem("=======================================================================================================================================");
+                                    });
+                                } else {
+                                    EventQueue.invokeLater(() -> {
+                                        saidaFrame.adicionarMensagem("Erro: Nao foi possivel receber a lista de movimentacoes.");
+                                    });
+                                }
+                            } catch (IOException | ClassNotFoundException e) {
+                                e.printStackTrace();
+                                EventQueue.invokeLater(() -> {
+                                    saidaFrame.adicionarMensagem("Erro ao receber movimentacoes: " + e.getMessage());
+                                });
+                            }
+                            // *** Fim da adição ***
+                            
                         } else if (!lista.isEmpty() && lista.get(0) instanceof Movimento) {
                             List<Movimento> movimentos = (List<Movimento>) lista;
                             // Atualiza a interface gráfica na thread de eventos do Swing

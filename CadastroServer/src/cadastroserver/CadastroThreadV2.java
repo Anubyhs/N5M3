@@ -40,7 +40,7 @@ public class CadastroThreadV2 extends Thread {
         try (ObjectInputStream in = new ObjectInputStream(s1.getInputStream());
              ObjectOutputStream out = new ObjectOutputStream(s1.getOutputStream())) {
 
-            System.out.println("SERVIDOR: Conexão estabelecida para nova thread.");
+            System.out.println("SERVIDOR: Conexao estabelecida para nova thread.");
 
             String login = (String) in.readObject();
             String senha = (String) in.readObject();
@@ -49,19 +49,19 @@ public class CadastroThreadV2 extends Thread {
 
             List<Usuario> usuarios = ctrlUsuario.findUsuario(login, senha);
             if (usuarios.isEmpty()) {
-                System.out.println("SERVIDOR: Login inválido para " + login);
-                out.writeObject("ERRO: Usuário ou senha inválidos."); // *** CORREÇÃO: Envia erro para o cliente ***
+                System.out.println("SERVIDOR: Login invalido para " + login);
+                out.writeObject("ERRO: Usuario ou senha invalidos."); // *** CORREÇÃO: Envia erro para o cliente ***
                 s1.close(); // Fecha o socket após enviar o erro
                 return;
             }
             Usuario usuario = usuarios.get(0);
-            System.out.println("SERVIDOR: Usuário " + usuario.getLogin() + " autenticado com sucesso.");
-            out.writeObject("OK: Usuário " + usuario.getLogin() + " conectado."); // Envia confirmação de login
+            System.out.println("SERVIDOR: Usuario " + usuario.getLogin() + " autenticado com sucesso.");
+            out.writeObject("OK: Usuario " + usuario.getLogin() + " conectado."); // Envia confirmação de login
 
             boolean isRunning = true;
             while (isRunning) {
                 try {
-                    System.out.println("SERVIDOR: Aguardando próximo comando...");
+                    System.out.println("SERVIDOR: Aguardando proximo comando...");
                     String comando = ((String) in.readObject()).toUpperCase(); // Esta é a LINHA 57 (ou próxima) do seu stack trace original
                     System.out.println("SERVIDOR: Recebeu comando: '" + comando + "'");
 
@@ -100,6 +100,11 @@ public class CadastroThreadV2 extends Thread {
                             List<Produto> produtos = ctrlProduto.findProdutoEntities();
                             out.writeObject(produtos);
                             System.out.println("SERVIDOR: Enviou lista de produtos para o cliente.");
+                            
+                            List<Movimento> movimentos = ctrlMov.findMovimentoEntities();
+                            out.writeObject(movimentos);
+                            System.out.println("SERVIDOR: Enviou lista de movimentacoes completas para o cliente.");
+                            
                             break;
                         }
                         case "ME": {
@@ -108,7 +113,7 @@ public class CadastroThreadV2 extends Thread {
                                 .filter(m -> m.getTipo() == 'E')
                                 .collect(Collectors.toList());
                             out.writeObject(entradas);
-                            System.out.println("SERVIDOR: Enviou lista de movimentações de entrada.");
+                            System.out.println("SERVIDOR: Enviou lista de movimentacoes de entrada.");
                             break;
                         }
                         case "MS": {
@@ -117,7 +122,7 @@ public class CadastroThreadV2 extends Thread {
                                 .filter(m -> m.getTipo() == 'S')
                                 .collect(Collectors.toList());
                             out.writeObject(saidas);
-                            System.out.println("SERVIDOR: Enviou lista de movimentações de saída.");
+                            System.out.println("SERVIDOR: Enviou lista de movimentacoes de saida.");
                             break;
                         }
                         case "E": {
@@ -143,7 +148,7 @@ public class CadastroThreadV2 extends Thread {
 
                             if (quantidade <= 0) {
                                 out.writeObject("Quantidade para entrada deve ser positiva.");
-                                System.out.println("SERVIDOR: Erro - Quantidade para entrada não positiva.");
+                                System.out.println("SERVIDOR: Erro - Quantidade para entrada nao positiva.");
                                 break;
                             }
 
@@ -171,7 +176,7 @@ public class CadastroThreadV2 extends Thread {
                             int idProduto = (int) in.readObject();
                             int quantidade = (int) in.readObject();
                             float valorUnitario = (float) in.readObject();
-                            System.out.println("SERVIDOR: Recebido dados para Saída: Pessoa ID=" + idPessoa + ", Produto ID=" + idProduto + ", Qtd=" + quantidade + ", Valor Uni=" + valorUnitario);
+                            System.out.println("SERVIDOR: Recebido dados para Saida: Pessoa ID=" + idPessoa + ", Produto ID=" + idProduto + ", Qtd=" + quantidade + ", Valor Uni=" + valorUnitario);
 
 
                             Pessoa pessoa = ctrlPessoa.findPessoa(idPessoa);
@@ -179,18 +184,18 @@ public class CadastroThreadV2 extends Thread {
 
                             if (produto == null) {
                                 out.writeObject("Produto Inexistente");
-                                System.out.println("SERVIDOR: Erro - Produto Inexistente para Saída.");
+                                System.out.println("SERVIDOR: Erro - Produto Inexistente para Saida.");
                                 break;
                             }
                             if (pessoa == null) {
                                 out.writeObject("Pessoa Inexistente");
-                                System.out.println("SERVIDOR: Erro - Pessoa Inexistente para Saída.");
+                                System.out.println("SERVIDOR: Erro - Pessoa Inexistente para Saida.");
                                 break;
                             }
 
                             if (quantidade <= 0) {
-                                out.writeObject("Quantidade para saída deve ser positiva.");
-                                System.out.println("SERVIDOR: Erro - Quantidade para saída não positiva.");
+                                out.writeObject("Quantidade para saida deve ser positiva.");
+                                System.out.println("SERVIDOR: Erro - Quantidade para saída nao positiva.");
                                 break;
                             }
 
@@ -215,7 +220,7 @@ public class CadastroThreadV2 extends Thread {
 
                             List<Produto> produtosAtualizados = ctrlProduto.findProdutoEntities();
                             out.writeObject(produtosAtualizados); // Envia a lista atualizada
-                            System.out.println("SERVIDOR: Movimento de Saída registrado e lista de produtos atualizada enviada.");
+                            System.out.println("SERVIDOR: Movimento de Saida registrado e lista de produtos atualizada enviada.");
                             break;
                         }
 
@@ -226,12 +231,12 @@ public class CadastroThreadV2 extends Thread {
                         }
 
                         default:
-                            System.out.println("SERVIDOR: Comando inválido: " + comando);
-                            out.writeObject("ERRO: Comando inválido '" + comando + "'.");
+                            System.out.println("SERVIDOR: Comando invalido: " + comando);
+                            out.writeObject("ERRO: Comando invalido '" + comando + "'.");
                             break;
                     }
                 } catch (EOFException eof) {
-                    System.out.println("SERVIDOR: Conexão encerrada pelo cliente (EOF).");
+                    System.out.println("SERVIDOR: Conexao encerrada pelo cliente (EOF).");
                     isRunning = false;
                 } catch (IOException e) {
                     System.err.println("SERVIDOR: Erro de I/O na thread: " + e.getMessage());
@@ -260,7 +265,7 @@ public class CadastroThreadV2 extends Thread {
                 System.err.println("SERVIDOR: Erro ao fechar o socket: " + e.getMessage());
                 e.printStackTrace();
             }
-            System.out.println("SERVIDOR: Thread de conexão do cliente finalizada.");
+            System.out.println("SERVIDOR: Thread de conexao do cliente finalizada.");
         }
     }
 }
